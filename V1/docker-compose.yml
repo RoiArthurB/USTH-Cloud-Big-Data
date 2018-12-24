@@ -1,0 +1,23 @@
+spark:
+  image: gettyimages/spark
+  command: bin/spark-class org.apache.spark.deploy.master.Master -h master
+  hostname: master
+  environment:
+    MASTER: spark://master:7077
+    SPARK_CONF_DIR: /conf
+    SPARK_PUBLIC_DNS: localhost
+  expose:
+    - 7001
+    - 7002
+    - 7003
+    - 7004
+    - 7005
+    - 7077
+    - 6066
+  ports:
+    - 4040:4040
+    - 6066:6066
+    - 7077:7077
+    - 8080:8080
+  volumes:
+    - ../data:/tmp/data
