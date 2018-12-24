@@ -1,0 +1,12 @@
+Run Docker-compose :
+	sudo docker-compose -f projectV1.yml up
+
+Search Master Container name :
+	sudo docker inspect project_master_1 | grep IPAddress
+
+Connect to master :
+	 sudo docker exec -it project_master_1 /bin/bash
+
+Launch work :
+	./bin/spark-submit --class WordCount --master 
+spark://roiarthurb:7077 /tmp/data/wc.jar /tmp/data/sample1.txt
