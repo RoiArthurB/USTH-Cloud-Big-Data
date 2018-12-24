@@ -9,4 +9,7 @@ Connect to master :
 
 Launch work :
 	./bin/spark-submit --class WordCount --master 
-spark://roiarthurb:7077 /tmp/data/wc.jar /tmp/data/sample1.txt
+spark://master:7077 /tmp/data/wc.jar /tmp/data/sample1.txt
+
+Result :
+	cat ./data/result/*
