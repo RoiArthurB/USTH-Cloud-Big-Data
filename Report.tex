@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{listings}
 
 \title{Report Cloud And BigData}
 \author{Rémi DE BAUDRY D'ASSON & Arthur BRUGIERE & Tom HERBRETEAU }
@@ -11,15 +12,34 @@
 
 \section{Introduction}
 
-As presented in the subject, the goal of this project is to use a spark infrastructure inside docker containers to simulate a cluster of virtual machines. \\
+As presented in the subject, the goal of this project is to use a Spark infrastructure inside Docker containers to simulate a cluster of virtual machines. \\
 
 In our case, we will execute a wordcount application according to several scenarios and counting different size of text, then we will measure and compare the performances of different architectures to figure where the improvement or non improvement comes from.
 
 \section{Scenarios}
 
+In this section, we will describe the different scenarios we will implement to test our application, from the most simple to the most complicated. \\
+
+For each scenario, we will test it's performance on two text files, a small one (2Ko) and a big one (2Go), then compare the execution time.
+
 \subsection{Scenario 1 : One Spark container running locally}
 
+The first version of the scenario consist in using just one Docker container with Spark, which is the equivalent of running Spark locally on our computer. \\
+
+In this scenario, after Spark is configured correctly, we will simply launch Spark locally using the following command: 
+\begin{lstlisting}
+spark-submit --class <classname> --master local <jarfile> 
+\end{lstlisting}
+\ \\
+
+\noindent We get the following results:
+\begin{itemize}
+  \item With the first file: 0s
+  \item With the second file: 0s
+\end{itemize}
+
 \subsection{Scenario 2 : Several Spark containers running with one master and several slaves}
+
 
 \subsection{Scenario 3 : Same as previous + one HDFS container}
 
