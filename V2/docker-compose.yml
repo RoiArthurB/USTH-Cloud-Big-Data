@@ -21,7 +21,7 @@ master:
     - 8080:8080
   volumes:
     - ./conf/master:/conf
-    - ./data:/tmp/data
+    - ../data:/tmp/data
 
 worker:
   image: gettyimages/spark
@@ -46,4 +46,4 @@ worker:
     - 8081:8081
   volumes:
     - ./conf/worker:/conf
-    - ./data:/tmp/data
+    - ../data:/tmp/data
