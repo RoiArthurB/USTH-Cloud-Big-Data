@@ -14,13 +14,13 @@
 
 As presented in the subject, the goal of this project is to use a Spark infrastructure inside Docker containers to simulate a cluster of virtual machines. \\
 
-In our case, we will execute a wordcount application on a big text file, according to several scenarios, then we will measure and compare the performances of different architectures to figure where the improvement or non improvement comes from.
+\noindent In our case, we will execute a wordcount application on a big text file, according to several scenarios, then we will measure and compare the performances of different architectures to figure where the improvement or non improvement comes from.
 
 \section{Scenarios}
 
 In this section, we will describe the different scenarios we will implement to test our application, from the most simple to the most complicated. \\
 
-For each scenario, we will test it's performance on a big text file (2Go), then compare the execution time.
+\noindent For each scenario, we will test it's performance on a big text file (2Go), then compare the execution time. With the project we packaged a small 2Ko file called \textit{sample1.txt} so you can test easily, but feel free to change this file with one of another size if you want (don't forget to keep the same name though).
 
 
 
@@ -28,7 +28,7 @@ For each scenario, we will test it's performance on a big text file (2Go), then 
 
 The first version of the scenario consist in using just one Docker container with Spark, which is the equivalent of running Spark locally on our computer. \\
 
-To launch this scenario, simply go into \textbf{V2} folder and execute the script \textbf{launch.sh}. The script will do the following:
+\noindent To launch this scenario, simply go into \textbf{V2} folder and execute the script \textbf{launch.sh}. The script will do the following:
 \begin{enumerate}
     \item Run Docker-compose:
     \begin{quote}
@@ -121,7 +121,73 @@ cat ./data/result/*
 \vspace*{0.2cm}
 
 
+
 \subsection{Scenario 3 : Same as previous + several HDFS containers}
+
+In this third and last version of the scenario, we will use the same architecture as before but this time we will also add several HDFS docker containers to manage the HDFS system. We have here an HDFS architecture with 3 namenodes where everything is distributed on several docker containers.\\
+
+\noindent To launch this scenario, simply go into \textbf{V3} folder and execute the script \textbf{launch.sh}. You will be asked how many workers you want to start, then the script does the following:
+\begin{enumerate}
+    \item Run Docker-compose and specifying the number of workers:
+    \begin{quote}
+\begin{verbatim}
+sudo docker-compose up -d --scale worker=$nbrWorkers
+\end{verbatim}
+    \end{quote}
+    
+    \item (Optional) Format the HDFS:
+    \begin{quote}
+\begin{verbatim}
+sudo docker exec -ti namenode sh -c 
+"/opt/hadoop-2.7.1/bin/hdfs namenode -format"
+\end{verbatim}
+    \end{quote}
+    
+    \item Add file into HDFS system:
+    \begin{quote}
+\begin{verbatim}
+sudo docker exec -ti namenode sh -c 
+"/opt/hadoop-2.7.1/bin/hdfs dfs -mkdir /input"
+
+sudo docker exec -ti namenode sh -c 
+"/opt/hadoop-2.7.1/bin/hdfs dfs -put /tmp/data/sample1.txt /input"
+\end{verbatim}
+    \end{quote}
+    
+    \item Launch work in master container:
+    \begin{quote}
+\begin{verbatim}
+sudo docker exec -ti v3_master_1 sh -c 
+"/usr/spark-2.3.1/bin/spark-submit --class 
+WordCount --master spark://master:7077 
+/tmp/data/wc.jar hdfs://namenode:8020/input/sample1.txt"
+\end{verbatim}
+    \end{quote}
+    
+    \item And finally display the result:
+    \begin{quote}
+\begin{verbatim}
+cat ./data/result/*
+\end{verbatim}
+    \end{quote}
+\end{enumerate}
+\ \
+
+\noindent We get the following results with different number of workers: \\
+\begin{center}
+    \begin{tabular}{||c c c c||} 
+    \hline
+    FILE SIZE & NUM WORKER & NUM CORE/WORKER & TIME \\ [0.5ex] 
+    \hline\hline
+    2Go & 1 & 1 & \textbf{0ms} \\ 
+    \hline
+    2Go & 2 & 1 & \textbf{0ms} \\ 
+    \hline
+    2Go & 3 & 1 & \textbf{0ms} \\ 
+    \hline
+    \end{tabular}
+\end{center}
+\vspace*{0.2cm}
 
 \section{Conclusion}
 
