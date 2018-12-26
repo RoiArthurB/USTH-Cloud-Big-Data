@@ -3,7 +3,7 @@
 \usepackage{listings}
 
 \title{Report Cloud And BigData}
-\author{Rémi DE BAUDRY D'ASSON & Arthur BRUGIERE & Tom HERBRETEAU }
+\author{Rémi DE BAUDRY D'ASSON & Arthur BRUGIERE}
 \date{December 2018}
 
 \begin{document}
@@ -20,7 +20,7 @@ As presented in the subject, the goal of this project is to use a Spark infrastr
 
 In this section, we will describe the different scenarios we will implement to test our application, from the most simple to the most complicated. \\
 
-\noindent For each scenario, we will test it's performance on a big text file (2Go), then compare the execution time. With the project we packaged a small 2Ko file called \textit{sample1.txt} so you can test easily, but feel free to change this file with one of another size if you want (don't forget to keep the same name though).
+\noindent For each scenario, we will test it's performance on a big text file (4.28Go) with a 4 cores computer, then compare the execution time. With the project we packaged a small script called \textbf{incrementFileSize.sh} at the root of the project. This file create a 4.28Go file from the small 2Ko starter file, so you can choose to test with either a small or a big file.
 
 
 
@@ -56,7 +56,7 @@ cat ./data/result/*
 \end{enumerate}
 \ \
 
-\noindent In this configuration, with our 2Go file we get an execution time of \textbf{0ms}.
+\noindent In this configuration, with our 4.28Go file we get an execution time of about \textbf{4 minutes and 29 seconds} .
 
 
 
@@ -102,19 +102,17 @@ cat ./data/result/*
     \hline
     FILE SIZE & NUM WORKER & NUM CORE/WORKER & TIME \\ [0.5ex] 
     \hline\hline
-    2Go & 1 & 1 & \textbf{0ms} \\ 
+    4.28Go & 1 & 1 & \textbf{4m 26s} \\ 
     \hline
-    2Go & 1 & 2 & \textbf{0ms} \\ 
+    4.28Go & 1 & 2 & \textbf{2m 20s} \\ 
     \hline
-    2Go & 1 & 3 & \textbf{0ms} \\ 
+    4.28Go & 1 & 3 & \textbf{2m 20s} \\ 
     \hline
-    2Go & 1 & 4 & \textbf{0ms} \\ 
+    4.28Go & 2 & 1 & \textbf{2m 30s} \\ 
     \hline
-    2Go & 2 & 1 & \textbf{0ms} \\ 
+    4.28Go & 2 & 2 & \textbf{2m 21s} \\ 
     \hline
-    2Go & 2 & 2 & \textbf{0ms} \\ 
-    \hline
-    2Go & 3 & 1 & \textbf{0ms} \\ 
+    4.28Go & 3 & 1 & \textbf{2m 28s} \\ 
     \hline
     \end{tabular}
 \end{center}
@@ -143,7 +141,7 @@ sudo docker exec -ti namenode sh -c
 \end{verbatim}
     \end{quote}
     
-    \item Add file into HDFS system:
+    \item (Optional) Add file into HDFS system:
     \begin{quote}
 \begin{verbatim}
 sudo docker exec -ti namenode sh -c 
@@ -179,16 +177,22 @@ cat ./data/result/*
     \hline
     FILE SIZE & NUM WORKER & NUM CORE/WORKER & TIME \\ [0.5ex] 
     \hline\hline
-    2Go & 1 & 1 & \textbf{0ms} \\ 
+    4.28Go & 1 & 1 & \textbf{4m 16s} \\ 
     \hline
-    2Go & 2 & 1 & \textbf{0ms} \\ 
-    \hline
-    2Go & 3 & 1 & \textbf{0ms} \\ 
+    4.28Go & 2 & 1 & \textbf{2m 36s} \\ 
     \hline
     \end{tabular}
 \end{center}
 \vspace*{0.2cm}
 
+Unfortunately, we could only do those two test since the computer used couldn't handle more.
+
 \section{Conclusion}
+
+What we can conclude from all those test is that, without much surprise, increasing the number of workers and the number of cores reduce the execution time. \\
+
+However, by looking at the results, we understand better how much each of this parameters influence the result. For example, in the V2, using 2 workers with 1 core is equivalent of using 1 worker with 2 cores but uses less cores. \\
+
+Furthermore, adding more workers most likely reduces even more the computation time, even though the computer used here saturated and couldn't show great result with 3 workers. Also, for the same reason, the use of HDFS didn't seem to make much improvements even though it was supposed to.
 
 \end{document}
