@@ -9,14 +9,22 @@ done
 # start HDFS & Spark
 sudo docker-compose up -d --scale worker=$nbrWorkers
 
-# Add file in HDFS
+# Format HDFS
 echo "Do you want to format the hdfs? [y-N]"
 read hdfsFormat
 if [[ $hdfsFormat == "y" ||  $hdfsFormat == "" ]]; then
 	sudo docker exec -ti namenode sh -c "/opt/hadoop-2.7.1/bin/hdfs namenode -format"
 fi
-sudo docker exec -ti namenode sh -c "/opt/hadoop-2.7.1/bin/hdfs dfs -mkdir /input"
-sudo docker exec -ti namenode sh -c "/opt/hadoop-2.7.1/bin/hdfs dfs -put /tmp/data/sample1.txt /input"
+
+# Add file in HDFS
+echo "Do you want to add file in the DFS ? [y-N]"
+read dfsAdd
+if [[ $dfsAdd == "y" ||  $dfsAdd == "" ]]; then
+	echo "Create folder /input in DFS"
+	sudo docker exec -ti namenode sh -c "/opt/hadoop-2.7.1/bin/hdfs dfs -mkdir /input"
+	echo "Add samplefile1.txt in DFS"
+	sudo docker exec -ti namenode sh -c "/opt/hadoop-2.7.1/bin/hdfs dfs -put /tmp/data/sample1.txt /input"
+fi
 
 # Run WordCount task
 sudo docker exec -ti v3_master_1 sh -c "/usr/spark-2.3.1/bin/spark-submit --class WordCount --master spark://master:7077 /tmp/data/wc.jar hdfs://namenode:8020/input/sample1.txt"
