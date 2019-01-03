@@ -2,92 +2,6 @@ version: "2"
 
 services:
 
-  ######################
-  #####   HADOOP   #####
-  ######################
-
-  namenode:
-    build: ./namenode
-    hostname: namenode
-    container_name: namenode
-    volumes:
-      - ./data/namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop.env
-    ports:
-      - 8020:8020
-    volumes:
-      - ../data/:/tmp/data
-
-  resourcemanager:
-    build: ./resourcemanager
-    hostname: resourcemanager
-    container_name: resourcemanager
-    depends_on:
-      - "namenode"
-    links:
-      - "namenode"
-    ports:
-      - "58088:8088"
-    env_file:
-      - ./hadoop.env
-
-  nodemanager1:
-    build: ./nodemanager
-    hostname: nodemanager1
-    container_name: nodemanager1
-    depends_on:
-      - "namenode"
-      - "resourcemanager"
-    links:
-      - "namenode"
-      - "resourcemanager"
-    ports:
-      - "58042:8042"
-    env_file:
-      - ./hadoop.env
-
-  datanode1:
-    build: ./datanode
-    hostname: datanode1
-    container_name: datanode1
-    depends_on:
-      - "namenode"
-    links:
-      - "namenode"
-    volumes:
-      - ./data/datanode1:/hadoop/dfs/data
-    env_file:
-      - ./hadoop.env
-
-  datanode2:
-    build: ./datanode
-    hostname: datanode2
-    container_name: datanode2
-    depends_on:
-      - "namenode"
-    links:
-      - "namenode"
-    volumes:
-      - ./data/datanode2:/hadoop/dfs/data
-    env_file:
-      - ./hadoop.env
-
-  datanode3:
-    build: ./datanode
-    hostname: datanode3
-    container_name: datanode3
-    depends_on:
-      - "namenode"
-    links:
-      - "namenode"
-    volumes:
-      - ./data/datanode3:/hadoop/dfs/data
-    env_file:
-      - ./hadoop.env
-
   #####################
   #####   SPARK   #####
   #####################
@@ -143,4 +57,76 @@ services:
       - ../data:/tmp/data
 #    env_file:
 #      - ./hadoop.env
+
+  ######################
+  #####   HADOOP   #####
+  ######################
+  namenode:
+    image: bde2020/hadoop-namenode:1.1.0-hadoop2.7.1-java8
+    container_name: namenode
+    ports:
+      - 8020:8020
+    volumes:
+      - ../data/:/tmp/data
+      - hadoop_namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+  
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:1.1.0-hadoop2.7.1-java8
+    container_name: resourcemanager
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
+    env_file:
+      - ./hadoop.env
+  
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:1.1.0-hadoop2.7.1-java8
+    container_name: nodemanager1
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
+    env_file:
+      - ./hadoop.env
+  
+  datanode1:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
+    container_name: datanode1
+    depends_on:
+      - namenode
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+  
+  datanode2:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
+    container_name: datanode2
+    depends_on:
+      - namenode
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+  
+  datanode3:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
+    container_name: datanode3
+    depends_on:
+      - namenode
+    volumes:
+      - hadoop_datanode3:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode1:
+  hadoop_datanode2:
+  hadoop_datanode3:
 
