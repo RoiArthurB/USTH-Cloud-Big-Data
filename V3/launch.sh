@@ -27,7 +27,7 @@ if [[ $dfsAdd == "y" ||  $dfsAdd == "" ]]; then
 fi
 
 # Run WordCount task
-sudo docker exec -ti v3_master_1 sh -c "/usr/spark-2.3.1/bin/spark-submit --class WordCount --master spark://master:7077 /tmp/data/wc.jar hdfs://namenode:8020/input/sample1.txt"
+sudo docker exec -ti v3_master_1 sh -c '$SPARK_HOME/bin/spark-submit --class WordCount --master spark://master:7077 /tmp/data/wc.jar hdfs://namenode:8020/input/sample1.txt'
 
 # Result :
 echo "Do you want to display result? [y-N]"
@@ -45,8 +45,8 @@ fi
 
 # Remove all
 echo "Do you want to clean this version from your computer? [y-N]"
-read stopDocker
-if [[ $stopDocker == "y" || $stopDocker == "" ]]; then
+read cleanDocker
+if [[ $cleanDocker == "y" || $cleanDocker == "" ]]; then
 	sudo docker-compose down --volume
 	rm -fr data
 fi
