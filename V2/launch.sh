@@ -21,7 +21,7 @@ echo "CORES=$nbrCores" > ".env"
 sudo docker-compose up -d --scale worker=$nbrWorkers
 
 # Launch work in Master container :
-sudo docker exec -ti v2_master_1 sh -c "/usr/spark-2.3.1/bin/spark-submit --class WordCount --master spark://master:7077 /tmp/data/wc.jar /tmp/data/sample1.txt"
+sudo docker exec -ti v2_master_1 sh -c '$SPARK_HOME/bin/spark-submit --class WordCount --master spark://master:7077 /tmp/data/wc.jar /tmp/data/sample1.txt'
 
 # Result :
 echo "Do you want to display result? [y-N]"
